@@ -18,7 +18,7 @@ def put_metrics_cloudwatch_region(client_cloudwatch, in_use_memory):
             {
                 'MetricName': 'TotalCodeSize',
                 'Timestamp': datetime.datetime.now().timestamp(),
-                'Value': in_use_memory/1024/1024,
+                'Value': in_use_memory/1024/1024/1024,
                 'Unit': 'Gigabytes',
                 'StorageResolution': 60
             }
@@ -33,7 +33,7 @@ def put_metrics_cloudwatch(client_cloudwatch, in_use_memory, function_name):
             {
                 'MetricName': 'CodeSize',
                 'Timestamp': datetime.datetime.now().timestamp(),
-                'Value': in_use_memory/1024/1024,
+                'Value': in_use_memory/1024/1024/1024,
                 'Unit': 'Gigabytes',
                 'StorageResolution': 60,
                 'Dimensions': [
@@ -49,11 +49,11 @@ def put_metrics_cloudwatch(client_cloudwatch, in_use_memory, function_name):
         ]
     )
 
-
 def lambda_handler(event, context):
     message = []
-    regions = []
     regions = [region['RegionName'] for region in boto3.client('ec2').describe_regions()['Regions']]
+
+    # Check if there is any specific region chosen by the user, else run for all the regions
     if event.get('region', ''):
         if event['region'] not in regions: return 'Invalid Region'
         regions = [event['region']]
